@@ -1,7 +1,7 @@
 # Fallen
 
 ## Overview
-Fallen Financial Tools es una recopilación de herramientas creadas mayormente por [St1tch](https://twitter.com/St1tch_BL), [Franco Lamas](https://www.linkedin.com/in/franco-lamas/) y Marcelo Colom
+Fallen Financial Tools es una recopilación de herramientas creadas mayormente por [St1tch](https://twitter.com/St1tch_BL), [Franco Lamas](https://www.linkedin.com/in/franco-lamas/) y Marcelo Colom.
 
 ## Fuentes
 
