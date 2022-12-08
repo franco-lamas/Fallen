@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 from setuptools import setup, find_packages
-from pyhomebroker import __version__
+__version__=0.3
 import io
 from os import path
 
