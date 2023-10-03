@@ -35,31 +35,6 @@ class yahoo:
     return df
 
 
-  def get_quotes(tickers):
-        url = "https://query1.finance.yahoo.com/v7/finance/quote?symbols="
-        headers = {
-                "Accept"  :  "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "Accept-Encoding"  :  "gzip, deflate, br",
-                "Accept-Language"  :  "en-US,en;q=0.5",
-                "Cache-Control"  :  "no-cache",
-                "Connection"  :  "keep-alive",
-                "DNT"  :  "1",
-                "Host"  :  "query1.finance.Yahoo.com",
-                "Pragma"  :  "no-cache",
-                "Upgrade-Insecure-Requests"  :  "1",
-                "User-Agent" : "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0"  }
-        response = requests.get(url = url+tickers, headers = headers)
-        status = response.status_code
-        if status != 200:
-            print ("Yahoo no retorno status=200:", status)
-        result = json.loads(response.text)
-        df = pd.DataFrame(result["quoteResponse"]["result"])
-        columns=['symbol','bid', 'ask', 'last', 'high', 'low', 'change', 'volume', 'previousclose']
-        filter_columns=["symbol",'bid', 'ask', "regularMarketPrice", "regularMarketDayHigh", "regularMarketDayLow", "regularMarketChangePercent", "regularMarketVolume", "regularMarketPreviousClose"]
-        df = df[filter_columns].copy()
-        df.columns = columns
-        df.change=df.change/100
-        return df
 
 class ambito:
   def dolar_blue(start_date,end_date):
@@ -72,16 +47,13 @@ class ambito:
     end_date = list(map(int, end_date))
     end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
     req = requests.get(url+start_date_str+'/'+end_date_str)
-    data = req.json()
-    data2= np.array(data)
-    df = pd.DataFrame(data2, columns = ['Fecha','Compra','Venta'])
+    df = req.json()
+    df=pd.DataFrame(df)
+    df.columns=df.loc[0]
     df = df.drop(labels=0, axis=0)
     df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
     df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-    for i in range(1,len(df)+1,1):
-      var1=df.at[i,"Fecha"].split("-")
-      var1 = list(map(int, var1))
-      df.at[i, 'Fecha']= datetime.date(var1[2],var1[1],var1[0])
+    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
     df.sort_values(by=['Fecha'], inplace=True)
     df = df.drop_duplicates("Fecha")
     df=df.reset_index()
@@ -98,16 +70,13 @@ class ambito:
     end_date = list(map(int, end_date))
     end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
     req = requests.get(url+start_date_str+'/'+end_date_str)
-    data = req.json()
-    data2= np.array(data)
-    df = pd.DataFrame(data2, columns = ['Fecha','Compra','Venta'])
+    df = req.json()
+    df=pd.DataFrame(df)
+    df.columns=df.loc[0]
     df = df.drop(labels=0, axis=0)
     df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
     df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-    for i in range(1,len(df)+1,1):
-      var1=df.at[i,"Fecha"].split("-")
-      var1 = list(map(int, var1))
-      df.at[i, 'Fecha']= datetime.date(var1[2],var1[1],var1[0])
+    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
     df.sort_values(by=['Fecha'], inplace=True)
     df = df.drop_duplicates("Fecha")
     df=df.reset_index()
@@ -124,17 +93,13 @@ class ambito:
     end_date = list(map(int, end_date))
     end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
     req = requests.get(url+start_date_str+'/'+end_date_str)
-    data = req.json()
-    data2= np.array(data)
-
-    df = pd.DataFrame(data2, columns = ['Fecha','Venta'])
+    df = req.json()
+    df=pd.DataFrame(df)
+    df.columns=df.loc[0]
     df = df.drop(labels=0, axis=0)
+    df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
     df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-
-    for i in range(1,len(df)+1,1):
-      var1=df.at[i,"Fecha"].split("-")
-      var1 = list(map(int, var1))
-      df.at[i, 'Fecha']= datetime.date(var1[2],var1[1],var1[0])
+    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
     df.sort_values(by=['Fecha'], inplace=True)
     df = df.drop_duplicates("Fecha")
     df=df.reset_index()

@@ -21,16 +21,6 @@ Ejemplo de data histórica:
     #Fechas en formato Año-Mes-Día como string
     yahoo.get_history("GGAL.BA","2020-01-01","2021-12-01")
     
-Ejemplo de Cotizaciones:
-
-    from Fallen import *
-    
-    #Solo un ticker
-    yahoo.get_quotes("GGAL.BA")
-     
-    #Multi-ticker
-    yahoo.get_quotes("GGAL,GGAL.BA")
-    
 ### Ambito Financiero
 Ejemplo 
 
@@ -70,7 +60,7 @@ Ejemplo de balances:
 ## Installation
 
 
-La instalacion via pip aun no esta disponible, unicamente desde desde el repositorio. Se requiere instalar [Git](https://git-scm.com/).
+    pip install Fallen
 
     pip install git+https://github.com/franco-lamas/Fallen --upgrade --no-cache-dir
 

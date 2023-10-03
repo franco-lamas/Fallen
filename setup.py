@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 from setuptools import setup, find_packages
-__version__=0.3
+__version__=0.4
 import io
 from os import path
 
@@ -51,13 +51,13 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
 
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ],
     platforms=['any'],
-    keywords='pandas, homebroker, online, historical, downloader, finance',
+    keywords='pandas, online, historical, downloader, finance',
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'examples']),
     install_requires=['pandas>=1.0.0', 'numpy>=1.18.1', 'requests>=2.21.0', 'datetime>=4.3', 'pytz>=2021.3']
 )
