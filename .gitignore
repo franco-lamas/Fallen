@@ -4,3 +4,4 @@ build/
 dist/
 fallen.egg-info
 __pycache__/
+test.py

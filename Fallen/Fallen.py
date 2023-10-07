@@ -213,7 +213,7 @@ class macrotrends:
     return data
 
 class cohen:
-  def stocks(ticker):
+  def stocks(ticker,start_date,end_date):
     s = requests.Session()
     df= s.get(url="https://www.cohen.com.ar/")
     url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
@@ -226,8 +226,22 @@ class cohen:
 
     df = pd.DataFrame(data["CotizacionList"])
 
-    idEspecie=df.set_index("EspecieAgrupacion").loc[ticker,"IdEspecie"]
-    data = { "idEspecie": idEspecie, "fechaDesde": '16/08/2023', 'fechaHasta': '11/11/2023'}
+    for i in range(len(df)):
+      var=df.at[i,"Simbolo"].split("-")
+      var = list(map(str, var))
+      df.at[i,"Simbolo"]=var[0]
+
+    idEspecie=df.set_index("Simbolo").at[ticker+" ","IdEspecie"]
+
+
+    start_date = start_date.split("-")
+    start_date = list(start_date)
+    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
+    end_date = end_date.split("-")
+    end_date = list(end_date)
+    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
+    
+    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
     url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
 
     data = s.post(url=url, headers=headers, data=data)
@@ -239,7 +253,7 @@ class cohen:
     df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
     return df
 
-  def fixed_income(ticker):
+  def fixed_income(ticker,start_date,end_date):
     s = requests.Session()
     df= s.get(url="https://www.cohen.com.ar/")
     url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
