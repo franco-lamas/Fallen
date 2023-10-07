@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 from setuptools import setup, find_packages
-__version__=0.4
+from Fallen import __version__
 import io
 from os import path
 

@@ -11,7 +11,7 @@
 # limitations under the License.
 #
 
-__version__ = '0.4'
+__version__ = '0.5'
 __author__ = 'Franco Lamas'
 
 from .Fallen import *
