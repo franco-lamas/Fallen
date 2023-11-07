@@ -7,7 +7,8 @@ Fallen Financial Tools es una recopilación de herramientas creadas mayormente p
 
 | Sitio | Datos|
 | ------------ | :------------: |
-|Yahoo Finance |Históricos, Cotizaciones|
+|Cohen | Históricos|
+|Yahoo Finance |Históricos|
 |Rava Bursátil | Históricos|
 |Ambito Financiero | Dolar Blue, Oficial y Solidario|
 |Macrotrends |Históricos, Balances|
@@ -39,6 +40,24 @@ Ejemplo
     rava.get_history("GGAL","2020-01-01","2021-12-01")
 
 ### Macrotrends
+
+
+### Cohen
+Metodos disponibles:
+
+- stocks(Acciones)
+- fixed_income(Renta Fija)
+- options(Opciones)
+- cedears(CEDEARs)
+
+Ejemplo
+
+    from Fallen import *
+    
+    #Fechas en formato Año-Mes-Día como string
+    cohen.stocks("GGAL","2023-09-01","2023-11-01")
+
+### Macrotrends
 Ejemplo de data histórica:
 
     from Fallen import *
@@ -60,7 +79,7 @@ Ejemplo de balances:
 ## Installation
 
 
-    pip install Fallen
+    pip install Fallen==0.6.0
 
     pip install git+https://github.com/franco-lamas/Fallen --upgrade --no-cache-dir
 

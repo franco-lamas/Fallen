@@ -97,7 +97,6 @@ class ambito:
     df=pd.DataFrame(df)
     df.columns=df.loc[0]
     df = df.drop(labels=0, axis=0)
-    df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
     df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
     df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
     df.sort_values(by=['Fecha'], inplace=True)
@@ -219,6 +218,46 @@ class cohen:
     url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
 
     data = {"grupo": "ACCIONES", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
+
+    headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
+
+    data = s.post(url=url, headers=headers, data=data).json()
+
+    df = pd.DataFrame(data["CotizacionList"])
+
+    for i in range(len(df)):
+      var=df.at[i,"Simbolo"].split("-")
+      var = list(map(str, var))
+      df.at[i,"Simbolo"]=var[0]
+
+    idEspecie=df.set_index("Simbolo").at[ticker+" ","IdEspecie"]
+
+
+    start_date = start_date.split("-")
+    start_date = list(start_date)
+    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
+    end_date = end_date.split("-")
+    end_date = list(end_date)
+    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
+    
+    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
+    url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
+
+    data = s.post(url=url, headers=headers, data=data)
+    df=pd.DataFrame(data.json())
+
+    df=df[["FechaString","PrecioUltimo","PrecioApertura","PrecioMaximo","PrecioMinimo","VolumenNominal"]]
+    df.columns=["date","last","open","high","low","volume"]
+    df.date=df.date.astype(str)
+    df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
+    return df
+
+  def cedears(ticker,start_date,end_date):
+    s = requests.Session()
+    df= s.get(url="https://www.cohen.com.ar/")
+    url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
+
+    data = {"grupo": "CEDEARS", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
 
     headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
 
