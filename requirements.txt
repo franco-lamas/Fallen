@@ -1,5 +1,6 @@
-pandas
-datetime
-requests
-numpy
-
+numpy==2.0.1
+pandas==2.2.2
+pytz==2024.1
+Requests==2.32.3
+setuptools==69.0.3
+urllib3==2.2.2
