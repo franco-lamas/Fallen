@@ -277,12 +277,14 @@ class cohen:
     def fixed_income(ticker, start_date, end_date):
         """Obtiene los datos de renta fija"""
         df = cohen._get_data(grupo="RENTAFIJA")
-        idEspecie = df.set_index("EspecieAgrupacion").at[ticker+" ", "IdEspecie"]
+        df["Simbolo"] = df["Simbolo"].apply(lambda x: x.split("-")[0])
+        idEspecie = df.set_index("Simbolo").at[ticker+" ", "IdEspecie"]
         return cohen._get_historical_data(idEspecie, start_date, end_date)
 
     @staticmethod
     def options(ticker, start_date, end_date):
         """Obtiene los datos de opciones"""
         df = cohen._get_data(grupo="OPCIONES")
-        idEspecie = df.set_index("EspecieAgrupacion").at[ticker+" ", "IdEspecie"]
+        df["Simbolo"] = df["Simbolo"].apply(lambda x: x.split("-")[0])
+        idEspecie = df.set_index("Simbolo").at[ticker+" ", "IdEspecie"]
         return cohen._get_historical_data(idEspecie, start_date, end_date)
