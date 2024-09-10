@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.0.0-rc3
+---
+- Correciones menores.
+
 1.0.0-rc2
 ---
 - Correciones menores.
