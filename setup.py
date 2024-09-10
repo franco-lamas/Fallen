@@ -41,7 +41,7 @@ setup(
     license='Apache',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-        'Development Status :: 3 - Beta',
+        'Development Status :: 3 - Alpha',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'Topic :: Office/Business :: Financial',
