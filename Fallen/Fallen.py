@@ -18,6 +18,10 @@ import re
 import json
 import numpy as np 
 import io
+import urllib3
+
+urllib3.disable_warnings()
+
 
 class yahoo:
   def get_history(ticker,date_start,date_end):
@@ -212,151 +216,73 @@ class macrotrends:
     return data
 
 class cohen:
-  def stocks(ticker,start_date,end_date):
-    s = requests.Session()
-    df= s.get(url="https://www.cohen.com.ar/")
-    url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
-
-    data = {"grupo": "ACCIONES", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
-
-    headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
-
-    data = s.post(url=url, headers=headers, data=data).json()
-
-    df = pd.DataFrame(data["CotizacionList"])
-
-    for i in range(len(df)):
-      var=df.at[i,"Simbolo"].split("-")
-      var = list(map(str, var))
-      df.at[i,"Simbolo"]=var[0]
-
-    idEspecie=df.set_index("Simbolo").at[ticker+" ","IdEspecie"]
-
-
-    start_date = start_date.split("-")
-    start_date = list(start_date)
-    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(end_date)
-    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
+    session = requests.Session()  # Sesión compartida entre todos los métodos
+    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
     
-    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
-    url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
+    @staticmethod
+    def _format_date(date_str):
+        """Convierte la fecha de formato YYYY-MM-DD a DD/MM/YYYY"""
+        return pd.to_datetime(date_str).strftime('%d/%m/%Y')
 
-    data = s.post(url=url, headers=headers, data=data)
-    df=pd.DataFrame(data.json())
+    @staticmethod
+    def _get_data(grupo):
+        """Obtiene los datos base de cotización para un grupo dado"""
+        url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
+        data = {"grupo": grupo, "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
+        
+        # Realizar la solicitud y verificar respuesta
+        response = cohen.session.post(url=url, headers=cohen.headers, data=data, verify=False)
+        if response.status_code != 200:
+            raise ValueError(f"Error en la solicitud, código de estado: {response.status_code}")
+        
+        return pd.DataFrame(response.json()["CotizacionList"])
 
-    df=df[["FechaString","PrecioUltimo","PrecioApertura","PrecioMaximo","PrecioMinimo","VolumenNominal"]]
-    df.columns=["date","last","open","high","low","volume"]
-    df.date=df.date.astype(str)
-    df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
-    return df
+    @staticmethod
+    def _get_historical_data(idEspecie, start_date, end_date):
+        """Solicita los datos históricos de cotizaciones para un idEspecie específico"""
+        url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
+        data = {
+            "idEspecie": idEspecie, 
+            "fechaDesde": cohen._format_date(start_date), 
+            'fechaHasta': cohen._format_date(end_date)
+        }
+        
+        response = cohen.session.post(url=url, headers=cohen.headers, data=data, verify=False)
+        if response.status_code != 200:
+            raise ValueError(f"Error en la solicitud de datos históricos, código de estado: {response.status_code}")
+        
+        df = pd.DataFrame(response.json())
+        df = df[["FechaString", "PrecioUltimo", "PrecioApertura", "PrecioMaximo", "PrecioMinimo", "VolumenNominal"]]
+        df.columns = ["date", "close", "open", "high", "low", "volume"]
+        df.date = pd.to_datetime(df.date.astype(str), format='%d/%m/%Y')
+        return df
 
-  def cedears(ticker,start_date,end_date):
-    s = requests.Session()
-    df= s.get(url="https://www.cohen.com.ar/")
-    url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
+    @staticmethod
+    def stocks(ticker, start_date, end_date):
+        """Obtiene los datos de acciones"""
+        df = cohen._get_data(grupo="ACCIONES")
+        df["Simbolo"] = df["Simbolo"].apply(lambda x: x.split("-")[0])
+        idEspecie = df.set_index("Simbolo").at[ticker+" ", "IdEspecie"]
+        return cohen._get_historical_data(idEspecie, start_date, end_date)
 
-    data = {"grupo": "CEDEARS", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
+    @staticmethod
+    def cedears(ticker, start_date, end_date):
+        """Obtiene los datos de CEDEARs"""
+        df = cohen._get_data(grupo="CEDEARS")
+        df["Simbolo"] = df["Simbolo"].apply(lambda x: x.split("-")[0])
+        idEspecie = df.set_index("Simbolo").at[ticker+" ", "IdEspecie"]
+        return cohen._get_historical_data(idEspecie, start_date, end_date)
 
-    headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
+    @staticmethod
+    def fixed_income(ticker, start_date, end_date):
+        """Obtiene los datos de renta fija"""
+        df = cohen._get_data(grupo="RENTAFIJA")
+        idEspecie = df.set_index("EspecieAgrupacion").at[ticker+" ", "IdEspecie"]
+        return cohen._get_historical_data(idEspecie, start_date, end_date)
 
-    data = s.post(url=url, headers=headers, data=data).json()
-
-    df = pd.DataFrame(data["CotizacionList"])
-
-    for i in range(len(df)):
-      var=df.at[i,"Simbolo"].split("-")
-      var = list(map(str, var))
-      df.at[i,"Simbolo"]=var[0]
-
-    idEspecie=df.set_index("Simbolo").at[ticker+" ","IdEspecie"]
-
-
-    start_date = start_date.split("-")
-    start_date = list(start_date)
-    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(end_date)
-    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
-    
-    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
-    url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
-
-    data = s.post(url=url, headers=headers, data=data)
-    df=pd.DataFrame(data.json())
-
-    df=df[["FechaString","PrecioUltimo","PrecioApertura","PrecioMaximo","PrecioMinimo","VolumenNominal"]]
-    df.columns=["date","last","open","high","low","volume"]
-    df.date=df.date.astype(str)
-    df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
-    return df
-
-  def fixed_income(ticker,start_date,end_date):
-    s = requests.Session()
-    df= s.get(url="https://www.cohen.com.ar/")
-    url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
-
-    data = {"grupo": "RENTAFIJA", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
-
-    headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
-
-    data = s.post(url=url, headers=headers, data=data).json()
-
-    df = pd.DataFrame(data["CotizacionList"])
-
-    idEspecie=df.set_index("EspecieAgrupacion").loc[ticker,"IdEspecie"]
-    
-    start_date = start_date.split("-")
-    start_date = list(start_date)
-    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(end_date)
-    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
-    
-    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
-    url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
-
-    data = s.post(url=url, headers=headers, data=data)
-    df=pd.DataFrame(data.json())
-
-    df=df[["FechaString","PrecioUltimo","PrecioApertura","PrecioMaximo","PrecioMinimo","VolumenNominal"]]
-    df.columns=["date","last","open","high","low","volume"]
-    df.date=df.date.astype(str)
-    df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
-
-    return df
-
-  def options(ticker,start_date,end_date):
-    s = requests.Session()
-    df= s.get(url="https://www.cohen.com.ar/")
-    url = 'https://www.cohen.com.ar/Financial//ListCotizacion'
-
-    data = {"grupo": "OPCIONES", "especieTipo": "", "campoOrden": "SIMBOLO", "sentidoOrden": "ASC"}
-
-    headers = {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
-
-    data = s.post(url=url, headers=headers, data=data).json()
-
-    df = pd.DataFrame(data["CotizacionList"])
-
-    idEspecie=df.set_index("EspecieAgrupacion").loc[ticker,"IdEspecie"]
-    
-    start_date = start_date.split("-")
-    start_date = list(start_date)
-    start_date_str = str(start_date[2])+"/"+str(start_date[1])+"/"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(end_date)
-    end_date_str = str(end_date[2])+"/"+str(end_date[1])+"/"+str(end_date[0])
-    data = { "idEspecie": idEspecie, "fechaDesde": start_date_str, 'fechaHasta': end_date_str}
-    url = "https://www.cohen.com.ar/Financial/GetTablaCotizacionesHistoricas"
-
-    data = s.post(url=url, headers=headers, data=data)
-    df=pd.DataFrame(data.json())
-
-    df=df[["FechaString","PrecioUltimo","PrecioApertura","PrecioMaximo","PrecioMinimo","VolumenNominal"]]
-    df.columns=["date","last","open","high","low","volume"]
-    df.date=df.date.astype(str)
-    df.date=pd.to_datetime(df.date, format='%d/%m/%Y')
-
-    return df
+    @staticmethod
+    def options(ticker, start_date, end_date):
+        """Obtiene los datos de opciones"""
+        df = cohen._get_data(grupo="OPCIONES")
+        idEspecie = df.set_index("EspecieAgrupacion").at[ticker+" ", "IdEspecie"]
+        return cohen._get_historical_data(idEspecie, start_date, end_date)

@@ -41,7 +41,7 @@ setup(
     license='Apache',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 3 - Beta',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'Topic :: Office/Business :: Financial',
@@ -59,5 +59,4 @@ setup(
     platforms=['any'],
     keywords='pandas, online, historical, downloader, finance',
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'examples']),
-    install_requires=['pandas>=1.0.0', 'numpy>=1.18.1', 'requests>=2.21.0', 'datetime>=4.3', 'pytz>=2021.3']
 )
