@@ -166,7 +166,8 @@ class rava:
       exit()
     quots=(pd.DataFrame(json.loads(response.text)['body']))
     quots.rename({'cierre': 'close','fecha':'date','apertura':'open','maximo':'high','minimo':'low','volumen':'volume'}, axis=1, inplace=True)
-    quots=quots.drop(['especie'],axis=1)
+
+    quots=quots[['date',	'open',	'high',	'low',	'close',	'volume',	'timestamp']].copy()
     return quots
 
 class macrotrends:

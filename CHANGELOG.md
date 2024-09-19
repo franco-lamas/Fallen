@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.0.0-rc4
+---
+- Correciones en funcion Rava.
+
 1.0.0-rc3
 ---
 - Correciones menores.
