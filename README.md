@@ -79,7 +79,7 @@ Ejemplo de balances:
 ## Installation
 
 
-    pip install Fallen==0.6.0
+    pip install Fallen==1.0.0-rc4
 
     pip install git+https://github.com/franco-lamas/Fallen --upgrade --no-cache-dir
 
