@@ -2,7 +2,7 @@
 ===========
 
 ## v1.1.0-rc1
-- Refactoreo y correciones en 
+- Refactoreo y correciones en Ambito Financiero.
 
 ## v1.0.0
 - Versión funcional y estable.
