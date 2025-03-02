@@ -76,11 +76,13 @@ Ejemplo de balances:
 
 [Paduel](https://github.com/paduel)
 
-## Installation
+## Instalacion
 
+Rama estable
+    pip install Fallen==1.0.0
 
-    pip install Fallen==1.0.0-rc4
-
+Rama de pruebas
+    pip install Fallen==1.1.0-rc1
     pip install git+https://github.com/franco-lamas/Fallen --upgrade --no-cache-dir
 
 

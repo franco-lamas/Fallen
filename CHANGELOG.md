@@ -1,7 +1,10 @@
-Change Log
-==========
+#Change Log
+===========
 
-1.0.0-rc4
+## v1.1.0-rc1
+- Refactoreo y correciones en 
+
+## v1.0.0
 - Versión funcional y estable.
 - Refactoreo en código.
 - Actualización de requerimientos.

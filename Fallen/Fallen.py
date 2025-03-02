@@ -33,73 +33,50 @@ class yahoo:
 
 
 class ambito:
-  def dolar_blue(start_date,end_date):
-    url = "https://mercados.ambito.com//dolar/informal/historico-general/"
-
-    start_date = start_date.split("-")
-    start_date = list(map(int, start_date))
-    start_date_str = str(start_date[2])+"-"+str(start_date[1])+"-"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(map(int, end_date))
-    end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
-    req = requests.get(url+start_date_str+'/'+end_date_str)
-    df = req.json()
-    df=pd.DataFrame(df)
-    df.columns=df.loc[0]
-    df = df.drop(labels=0, axis=0)
-    df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
-    df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
-    df.sort_values(by=['Fecha'], inplace=True)
-    df = df.drop_duplicates("Fecha")
-    df=df.reset_index()
-    df=df.drop(['index'],axis=1)
-    return df
-
-  def dolar_oficial(start_date,end_date):
-    url = "https://mercados.ambito.com//dolar/oficial/historico-general/"
-
-    start_date = start_date.split("-")
-    start_date = list(map(int, start_date))
-    start_date_str = str(start_date[2])+"-"+str(start_date[1])+"-"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(map(int, end_date))
-    end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
-    req = requests.get(url+start_date_str+'/'+end_date_str)
-    df = req.json()
-    df=pd.DataFrame(df)
-    df.columns=df.loc[0]
-    df = df.drop(labels=0, axis=0)
-    df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
-    df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
-    df.sort_values(by=['Fecha'], inplace=True)
-    df = df.drop_duplicates("Fecha")
-    df=df.reset_index()
-    df=df.drop(['index'],axis=1)
-    return df
-
-  def dolar_solidario(start_date,end_date):
-    url= "https://mercados.ambito.com//dolarturista/historico-general/"
-
-    start_date = start_date.split("-")
-    start_date = list(map(int, start_date))
-    start_date_str = str(start_date[2])+"-"+str(start_date[1])+"-"+str(start_date[0])
-    end_date = end_date.split("-")
-    end_date = list(map(int, end_date))
-    end_date_str = str(end_date[2])+"-"+str(end_date[1])+"-"+str(end_date[0])
-    req = requests.get(url+start_date_str+'/'+end_date_str)
-    df = req.json()
-    df=pd.DataFrame(df)
-    df.columns=df.loc[0]
-    df = df.drop(labels=0, axis=0)
-    df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
-    df.Fecha=pd.to_datetime(df.Fecha,format='%d/%m/%Y')
-    df.sort_values(by=['Fecha'], inplace=True)
-    df = df.drop_duplicates("Fecha")
-    df=df.reset_index()
-    df=df.drop(['index'],axis=1)
-    return df
+    BASE_URL = "https://mercados.ambito.com/"
+    HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    
+    @staticmethod
+    def format_date(date_str):
+        day, month, year = date_str.split("-")
+        return f"{year}-{month}-{day}"
+    
+    @classmethod
+    def fetch_data(cls, endpoint, start_date, end_date):
+        
+        url = f"{cls.BASE_URL}{endpoint}/historico-general/{cls.format_date(start_date)}/{cls.format_date(end_date)}"
+        response = requests.get(url,headers=cls.HEADERS)
+        data = response.json()
+        
+        df = pd.DataFrame(data)
+        df.columns = df.loc[0]
+        df = df.drop(labels=0, axis=0)
+        
+        if 'Compra' in df.columns:
+            df['Compra'] = df['Compra'].str.replace(",", ".").astype(float)
+        
+        if 'Venta' in df.columns:
+            df['Venta'] = df['Venta'].str.replace(",", ".").astype(float)
+        
+        df['Fecha'] = pd.to_datetime(df['Fecha'], format='%d/%m/%Y')
+        df.sort_values(by=['Fecha'], inplace=True)
+        df = df.drop_duplicates(subset=['Fecha']).reset_index(drop=True)
+        
+        return df
+    
+    @classmethod
+    def dolar_blue(cls, start_date, end_date):
+        return cls.fetch_data("dolar/informal", start_date, end_date)
+    
+    @classmethod
+    def dolar_oficial(cls, start_date, end_date):
+        return cls.fetch_data("dolar/oficial", start_date, end_date)
+    
+    @classmethod
+    def dolar_solidario(cls, start_date, end_date):
+        return cls.fetch_data("dolarturista", start_date, end_date)
 
 
 class rava:
