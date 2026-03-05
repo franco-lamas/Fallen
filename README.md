@@ -1,5 +1,10 @@
 # Fallen
 
+> ⚠️ **PROYECTO DEPRECADO Y NO MANTENIDO**  
+> Este proyecto se encuentra en estado de **soporte limitado**. La mayoría de los endpoints de datos están **no funcionales** debido a cambios en las APIs externas, limitaciones de acceso (rate limiting, Cloudflare), servidores caídos o cambios en los términos de servicio.  
+> **No se recomienda usar este código en producción.** Para análisis de mercado financiero argentino, considere otras librerías mantenidas activamente.  
+> Véase [.test/SUMMARY.md](.test/SUMMARY.md) para un diagnóstico detallado del estado de cada endpoint.
+
 ## Overview
 Fallen Financial Tools es una recopilación de herramientas creadas mayormente por [St1tch](https://twitter.com/St1tch_BL), [Franco Lamas](https://www.linkedin.com/in/franco-lamas/) y Marcelo Colom.
 
@@ -29,7 +34,7 @@ Ejemplo
       
       #Fechas en formato Año-Mes-Día como string
       ambito.dolar_blue("2016-10-01","2021-01-04")
-El mismo metodo es valido tamto para dolar_oficial y dolar_solidario
+El mismo metodo es valido tanto para dolar_oficial y dolar_solidario
 
 ### Rava Bursátil
 Ejemplo 

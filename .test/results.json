@@ -1,0 +1,77 @@
+{
+  "yahoo.get_history (GGAL.BA)": {
+    "status": "ERROR",
+    "detail": "HTTPError: HTTP Error 429: Too Many Requests",
+    "elapsed": 0.38
+  },
+  "yahoo.get_history (MSFT)": {
+    "status": "ERROR",
+    "detail": "HTTPError: HTTP Error 429: Too Many Requests",
+    "elapsed": 0.3
+  },
+  "ambito.dolar_blue": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.05
+  },
+  "ambito.dolar_oficial": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.06
+  },
+  "ambito.dolar_solidario": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.06
+  },
+  "rava.get_history (GGAL)": {
+    "status": "ERROR",
+    "detail": "ConnectionError: HTTPSConnectionPool(host='clasico.rava.com', port=443): Max retries exceeded with url: /lib/restapi/v3/publico/cotizaciones/historicos (Caused by NewConnectionError(\"HTTPSConnection(host='clasico.rava.com', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))",
+    "elapsed": 4.81
+  },
+  "rava.get_history (PAMP)": {
+    "status": "ERROR",
+    "detail": "ConnectionError: HTTPSConnectionPool(host='clasico.rava.com', port=443): Max retries exceeded with url: /lib/restapi/v3/publico/cotizaciones/historicos (Caused by NewConnectionError(\"HTTPSConnection(host='clasico.rava.com', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))",
+    "elapsed": 1.53
+  },
+  "macrotrends.get_symbols": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.21
+  },
+  "macrotrends.history (SPY)": {
+    "status": "ERROR",
+    "detail": "IndexError: list index out of range",
+    "elapsed": 0.06
+  },
+  "macrotrends.incomes (AAPL, Q)": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.06
+  },
+  "macrotrends.incomes (AAPL, A)": {
+    "status": "ERROR",
+    "detail": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "elapsed": 0.06
+  },
+  "cohen.stocks (GGAL)": {
+    "status": "ERROR",
+    "detail": "KeyError: 'Simbolo'",
+    "elapsed": 0.34
+  },
+  "cohen.cedears (AAPL)": {
+    "status": "ERROR",
+    "detail": "KeyError: 'Simbolo'",
+    "elapsed": 0.07
+  },
+  "cohen.fixed_income (PARP)": {
+    "status": "ERROR",
+    "detail": "KeyError: 'Simbolo'",
+    "elapsed": 0.12
+  },
+  "cohen.options (GGALC4)": {
+    "status": "ERROR",
+    "detail": "KeyError: 'Simbolo'",
+    "elapsed": 0.15
+  }
+}
